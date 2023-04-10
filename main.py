@@ -3,26 +3,21 @@ import yaml
 import time
 from urllib.parse import urlparse
 
-#Defining params to use in program  
-url = ""
-header={}
-data={}
-avail ={}
-latency=0
-start=0
-end = 0
-
 # Gets path of YAML file of endpoints from user, load and read it
 file_path = input("Enter the file path: ")
 with open(file_path, 'r') as file:
     endpoints = yaml.load(file, Loader=yaml.FullLoader)
 # Initializes avail map for up and total count for each domain listed in YAML file
+avail ={}
 for endpoint in endpoints:
     domain = urlparse(endpoint['url']).netloc
     avail[domain] = {'up': 0, 'total': 0}
 
 # Sends request to url via specified method with proper parameters, calculates latency and returns boolean value based on UP and DOWN results
 def send_request(url, header, payload, method):
+    latency=0
+    start=0
+    end = 0
     try:
         if method=="GET":
             start = time.time()
@@ -77,6 +72,9 @@ def send_request(url, header, payload, method):
 while 1:
     for endpoint in endpoints:
         method="GET"
+        url = ""
+        header={}
+        data={}
         if 'url' in endpoint:
             url = endpoint['url']
         if 'headers' in endpoint:
