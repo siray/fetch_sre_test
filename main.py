@@ -7,74 +7,37 @@ from urllib.parse import urlparse
 file_path = input("Enter the file path: ")
 with open(file_path, 'r') as file:
     endpoints = yaml.load(file, Loader=yaml.FullLoader)
+
 # Initializes avail map for up and total count for each domain listed in YAML file
-avail ={}
+avail={}
 for endpoint in endpoints:
     domain = urlparse(endpoint['url']).netloc
     avail[domain] = {'up': 0, 'total': 0}
+
+# Creates a dictionary for methods
+method_dict = {"GET":requests.get, "POST":requests.post, "PUT":requests.put, "DELETE":requests.delete, "PATCH": requests.patch}
 
 # Sends request to url via specified method with proper parameters, calculates latency and returns boolean value based on UP and DOWN results
 def send_request(url, header, payload, method):
     latency=0
     start=0
     end = 0
-    try:
-        if method=="GET":
-            start = time.time()
-            response = requests.get(url, headers=header, data=data)
-            end = time.time()
-        elif method=="POST":
-            start = time.time()
-            response = requests.post(url, headers=header, data=data)
-            end = time.time()
-        elif method=="PUT":
-            start = time.time()
-            response = requests.put(url, headers=header, data=data)
-            end = time.time()
-        elif method=="DELETE":
-            start = time.time()
-            response = requests.delete(url, headers=header, data=data)
-            end = time.time()
-        elif method=="PATCH":
-            start = time.time()
-            response = requests.patch(url, headers=header, data=data)
-            end = time.time()
-        elif method=="HEAD":
-            start = time.time()
-            response = requests.head(url, headers=header, data=data)
-            end = time.time()
-        elif method=="OPTIONS":
-            start = time.time()
-            response = requests.options(url, headers=header, data=data)
-            end = time.time()
-        elif method=="CONNECT":
-            start = time.time()
-            response = requests.connect(url, headers=header, data=data)
-            end = time.time()
-        elif method=="TRACE":
-            start = time.time()
-            response = requests.trace(url, headers=header, data=data)
-            end = time.time()
-
-        latency = end-start
-        if response.status_code > 199 and response.status_code < 300:
-            if latency < 0.5:
-                return True
-            else:
-                return False
-        else:
-            return False
-
-    except:
+    start = time.time()
+    response = method_dict[method](url, headers=header, data=data)
+    end = time.time()
+    latency = end-start
+    if response.status_code > 199 and response.status_code < 300 and latency < 0.5:
+        return True
+    else:
         return False
 
 # Runs infinitely with 15 second intervals, calls send_request for each endpoint and prints availability rate of each domain
 while 1:
     for endpoint in endpoints:
-        method="GET"
         url = ""
         header={}
         data={}
+        method="GET"
         if 'url' in endpoint:
             url = endpoint['url']
         if 'headers' in endpoint:
