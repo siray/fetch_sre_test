@@ -25,7 +25,7 @@ def send_request(url, header, payload, method):
             end = time.time()
         elif method=="POST":
             start = time.time()
-            response = requests.get(url, headers=header, data=data)
+            response = requests.post(url, headers=header, data=data)
             end = time.time()
         elif method=="PUT":
             start = time.time()
