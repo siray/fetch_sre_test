@@ -5,7 +5,6 @@ from urllib.parse import urlparse
 
 #Defining params to use in program  
 url = ""
-method = "GET"
 header={}
 data={}
 avail ={}
@@ -77,6 +76,7 @@ def send_request(url, header, payload, method):
 # Runs infinitely with 15 second intervals, calls send_request for each endpoint and prints availability rate of each domain
 while 1:
     for endpoint in endpoints:
+        method="GET"
         if 'url' in endpoint:
             url = endpoint['url']
         if 'headers' in endpoint:
