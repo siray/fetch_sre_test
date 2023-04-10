@@ -15,7 +15,7 @@ for endpoint in endpoints:
     avail[domain] = {'up': 0, 'total': 0}
 
 # Creates a dictionary for methods
-method_dict = {"GET":requests.get, "POST":requests.post, "PUT":requests.put, "DELETE":requests.delete, "PATCH": requests.patch}
+method_dict = {"GET":requests.get, "POST":requests.post, "PUT":requests.put, "DELETE":requests.delete, "PATCH": requests.patch, "HEAD":requests.head, "OPTIONS":requests.options}
 
 # Sends request to url via specified method with proper parameters, calculates latency and returns boolean value based on UP and DOWN results
 def send_request(url, header, payload, method):
